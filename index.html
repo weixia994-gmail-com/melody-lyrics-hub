@@ -39,15 +39,46 @@
           modal.style.display = 'none';
         }
 
-        document.addEventListener('click', function (e) {
-          const a = e.target.closest('a[href]');
-          if (!a) return;
-          const href = a.getAttribute('href') || '';
-          if (/10-music-videos\.(taiwise|camwise)\.dpdns\.org\/s\d{2}\.mp4/i.test(href)) {
-            e.preventDefault();
-            openPreview(href);
-          }
-        });
+        // Click triangle/cover area => preview
+        // Click Video button => keep original download behavior
+        function enhanceCards() {
+          const cards = document.querySelectorAll('div.group');
+          cards.forEach((card) => {
+            const cover = card.querySelector('.aspect-video');
+            const videoBtn = card.querySelector('a[href*="10-music-videos"][href$=".mp4"]');
+            if (!cover || !videoBtn || cover.dataset.enhanced === '1') return;
+
+            const src = videoBtn.getAttribute('href');
+            cover.dataset.enhanced = '1';
+            cover.style.position = 'relative';
+            cover.style.overflow = 'hidden';
+            cover.style.cursor = 'pointer';
+
+            // lightweight moving thumbnail in square
+            cover.innerHTML = `
+              <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
+                <source src="${src}" type="video/mp4" />
+              </video>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
+                <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
+                  <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
+                </div>
+              </div>
+            `;
+
+            const thumbVideo = cover.querySelector('video');
+            thumbVideo.play().catch(() => {});
+
+            cover.addEventListener('click', function () {
+              openPreview(src);
+            });
+          });
+        }
+
+        // initial + retry for React render timing
+        enhanceCards();
+        const timer = setInterval(enhanceCards, 1200);
+        setTimeout(() => clearInterval(timer), 20000);
 
         closeBtn.addEventListener('click', closePreview);
         modal.addEventListener('click', function (e) {
