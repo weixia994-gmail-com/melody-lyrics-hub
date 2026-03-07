@@ -10,5 +10,53 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Lightweight preview modal (non-invasive patch on top of static build) -->
+    <div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:24px;">
+      <div style="position:relative;width:min(1100px,96vw);max-height:92vh;">
+        <button id="preview-close" aria-label="Close" style="position:absolute;top:-40px;right:0;background:#111827;color:#fff;border:1px solid #374151;border-radius:10px;padding:6px 12px;cursor:pointer;">关闭</button>
+        <video id="preview-video" controls playsinline style="width:100%;max-height:92vh;background:#000;border-radius:12px;" preload="metadata"></video>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const modal = document.getElementById('preview-modal');
+        const video = document.getElementById('preview-video');
+        const closeBtn = document.getElementById('preview-close');
+
+        function openPreview(url) {
+          video.src = url;
+          modal.style.display = 'flex';
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        }
+
+        function closePreview() {
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+          modal.style.display = 'none';
+        }
+
+        document.addEventListener('click', function (e) {
+          const a = e.target.closest('a[href]');
+          if (!a) return;
+          const href = a.getAttribute('href') || '';
+          if (/10-music-videos\.(taiwise|camwise)\.dpdns\.org\/s\d{2}\.mp4/i.test(href)) {
+            e.preventDefault();
+            openPreview(href);
+          }
+        });
+
+        closeBtn.addEventListener('click', closePreview);
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) closePreview();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && modal.style.display !== 'none') closePreview();
+        });
+      })();
+    </script>
   </body>
 </html>
