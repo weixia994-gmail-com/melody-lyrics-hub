@@ -45,7 +45,7 @@
           const cards = document.querySelectorAll('div.group');
           cards.forEach((card) => {
             const cover = card.querySelector('.aspect-video');
-            const videoBtn = card.querySelector('a[href*="10-music-videos"][href$=".mp4"]');
+            const videoBtn = card.querySelector('a[href$=".mp4"]');
             if (!cover || !videoBtn || cover.dataset.enhanced === '1') return;
 
             const src = videoBtn.getAttribute('href');
