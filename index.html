@@ -55,7 +55,7 @@
             cover.style.cursor = 'pointer';
 
             // thumbnail in square: legacy tracks use jpg poster; current tracks use looping video
-            const legacyMatch = src.match(/\/downloads\/legacy\/(l\d{2})\.mp4/i);
+            const legacyMatch = src.match(/\/downloads\/legacy\/(s\d{2})\.mp4/i);
             if (legacyMatch) {
               const key = legacyMatch[1];
               cover.innerHTML = `

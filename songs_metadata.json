@@ -4,100 +4,100 @@
     "title": "Cozy Day Dream",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l01.mp4",
-    "srtFile": "l01.vtt",
-    "videoUrl": "./downloads/legacy/l01.mp4",
-    "lyricUrl": null
+    "videoFile": "s01.mp4",
+    "srtFile": "legacy_s01.vtt",
+    "videoUrl": "./downloads/legacy/s01.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s01.vtt"
   },
   {
     "id": 2,
     "title": "The Most Beautiful Slow Dance Song",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l02.mp4",
-    "srtFile": "l02.vtt",
-    "videoUrl": "./downloads/legacy/l02.mp4",
-    "lyricUrl": null
+    "videoFile": "s02.mp4",
+    "srtFile": "legacy_s02.vtt",
+    "videoUrl": "./downloads/legacy/s02.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s02.vtt"
   },
   {
     "id": 3,
     "title": "Morning Love Feel",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l03.mp4",
-    "srtFile": "l03.vtt",
-    "videoUrl": "./downloads/legacy/l03.mp4",
-    "lyricUrl": null
+    "videoFile": "s03.mp4",
+    "srtFile": "legacy_s03.vtt",
+    "videoUrl": "./downloads/legacy/s03.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s03.vtt"
   },
   {
     "id": 4,
     "title": "Rainy Day Nostalgia (Legacy)",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l04.mp4",
-    "srtFile": "l04.vtt",
-    "videoUrl": "./downloads/legacy/l04.mp4",
-    "lyricUrl": null
+    "videoFile": "s04.mp4",
+    "srtFile": "legacy_s04.vtt",
+    "videoUrl": "./downloads/legacy/s04.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s04.vtt"
   },
   {
     "id": 5,
     "title": "Lazy Morning Dream",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l05.mp4",
-    "srtFile": "l05.vtt",
-    "videoUrl": "./downloads/legacy/l05.mp4",
-    "lyricUrl": null
+    "videoFile": "s05.mp4",
+    "srtFile": "legacy_s05.vtt",
+    "videoUrl": "./downloads/legacy/s05.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s05.vtt"
   },
   {
     "id": 6,
     "title": "Fireside Romance",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l06.mp4",
-    "srtFile": "l06.vtt",
-    "videoUrl": "./downloads/legacy/l06.mp4",
-    "lyricUrl": null
+    "videoFile": "s06.mp4",
+    "srtFile": "legacy_s06.vtt",
+    "videoUrl": "./downloads/legacy/s06.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s06.vtt"
   },
   {
     "id": 7,
     "title": "Lazy Holiday Dream",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l07.mp4",
-    "srtFile": "l07.vtt",
-    "videoUrl": "./downloads/legacy/l07.mp4",
-    "lyricUrl": null
+    "videoFile": "s07.mp4",
+    "srtFile": "legacy_s07.vtt",
+    "videoUrl": "./downloads/legacy/s07.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s07.vtt"
   },
   {
     "id": 8,
     "title": "Sunny Bikini Yacht Vacation",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l08.mp4",
-    "srtFile": "l08.vtt",
-    "videoUrl": "./downloads/legacy/l08.mp4",
-    "lyricUrl": null
+    "videoFile": "s08.mp4",
+    "srtFile": "legacy_s08.vtt",
+    "videoUrl": "./downloads/legacy/s08.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s08.vtt"
   },
   {
     "id": 9,
     "title": "Whispers in the Rain",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l09.mp4",
-    "srtFile": "l09.vtt",
-    "videoUrl": "./downloads/legacy/l09.mp4",
-    "lyricUrl": null
+    "videoFile": "s09.mp4",
+    "srtFile": "legacy_s09.vtt",
+    "videoUrl": "./downloads/legacy/s09.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s09.vtt"
   },
   {
     "id": 10,
     "title": "Lazy Office Glow",
     "genre": "Legacy",
     "duration": "-",
-    "videoFile": "l10.mp4",
-    "srtFile": "l10.vtt",
-    "videoUrl": "./downloads/legacy/l10.mp4",
-    "lyricUrl": null
+    "videoFile": "s10.mp4",
+    "srtFile": "legacy_s10.vtt",
+    "videoUrl": "./downloads/legacy/s10.mp4",
+    "lyricUrl": "./downloads/lyrics/legacy_s10.vtt"
   },
   {
     "id": 11,
