@@ -54,20 +54,32 @@
             cover.style.overflow = 'hidden';
             cover.style.cursor = 'pointer';
 
-            // lightweight moving thumbnail in square
-            cover.innerHTML = `
-              <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
-                <source src="${src}" type="video/mp4" />
-              </video>
-              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
-                <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
-                  <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
+            // thumbnail in square: legacy tracks use jpg poster; current tracks use looping video
+            const legacyMatch = src.match(/\/downloads\/legacy\/(l\d{2})\.mp4/i);
+            if (legacyMatch) {
+              const key = legacyMatch[1];
+              cover.innerHTML = `
+                <img src="./downloads/legacy/${key}.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.9;background:#111827" />
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
+                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
+                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
+                  </div>
                 </div>
-              </div>
-            `;
-
-            const thumbVideo = cover.querySelector('video');
-            thumbVideo.play().catch(() => {});
+              `;
+            } else {
+              cover.innerHTML = `
+                <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
+                  <source src="${src}" type="video/mp4" />
+                </video>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
+                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
+                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
+                  </div>
+                </div>
+              `;
+              const thumbVideo = cover.querySelector('video');
+              thumbVideo && thumbVideo.play().catch(() => {});
+            }
 
             cover.addEventListener('click', function () {
               openPreview(src);
