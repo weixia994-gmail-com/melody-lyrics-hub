@@ -1,102 +1,222 @@
 [
   {
     "id": 1,
+    "title": "Cozy Day Dream",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l01.mp4",
+    "srtFile": "l01.vtt",
+    "videoUrl": "./downloads/legacy/l01.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 2,
+    "title": "The Most Beautiful Slow Dance Song",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l02.mp4",
+    "srtFile": "l02.vtt",
+    "videoUrl": "./downloads/legacy/l02.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 3,
+    "title": "Morning Love Feel",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l03.mp4",
+    "srtFile": "l03.vtt",
+    "videoUrl": "./downloads/legacy/l03.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 4,
+    "title": "Rainy Day Nostalgia (Legacy)",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l04.mp4",
+    "srtFile": "l04.vtt",
+    "videoUrl": "./downloads/legacy/l04.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 5,
+    "title": "Lazy Morning Dream",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l05.mp4",
+    "srtFile": "l05.vtt",
+    "videoUrl": "./downloads/legacy/l05.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 6,
+    "title": "Fireside Romance",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l06.mp4",
+    "srtFile": "l06.vtt",
+    "videoUrl": "./downloads/legacy/l06.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 7,
+    "title": "Lazy Holiday Dream",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l07.mp4",
+    "srtFile": "l07.vtt",
+    "videoUrl": "./downloads/legacy/l07.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 8,
+    "title": "Sunny Bikini Yacht Vacation",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l08.mp4",
+    "srtFile": "l08.vtt",
+    "videoUrl": "./downloads/legacy/l08.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 9,
+    "title": "Whispers in the Rain",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l09.mp4",
+    "srtFile": "l09.vtt",
+    "videoUrl": "./downloads/legacy/l09.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 10,
+    "title": "Lazy Office Glow",
+    "genre": "Legacy",
+    "duration": "-",
+    "videoFile": "l10.mp4",
+    "srtFile": "l10.vtt",
+    "videoUrl": "./downloads/legacy/l10.mp4",
+    "lyricUrl": null
+  },
+  {
+    "id": 11,
     "title": "Floral Dress Girl",
     "genre": "R&B Ballad",
     "videoFile": "s01.mp4",
     "srtFile": "s01.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Floral Dress Girl – Melody Vibes (R&B Ballad) ｜ Music Video_c3dd0c76.mp4",
     "sizeBytes": 58000000,
-    "duration": "4:12"
+    "duration": "4:12",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 2,
+    "id": 12,
     "title": "Swiss Floral Muse",
     "genre": "Chill R&B",
     "videoFile": "s02.mp4",
     "srtFile": "s02.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Swiss Floral Muse – Melody Vibes (Chill R&B) ｜ Music Video_d18e76c9.mp4",
     "sizeBytes": 52000000,
-    "duration": "4:25"
+    "duration": "4:25",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 3,
+    "id": 13,
     "title": "In The Sunlight",
     "genre": "Lofi Acoustic",
     "videoFile": "s03.mp4",
     "srtFile": "s03.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 In The Sunlight – Melody Vibes (Lofi Acoustic) ｜ Music Video_7b8a6c79.mp4",
     "sizeBytes": 48000000,
-    "duration": "3:58"
+    "duration": "3:58",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 4,
+    "id": 14,
     "title": "Sensual Balcony Night",
     "genre": "Lofi R&B",
     "videoFile": "s04.mp4",
     "srtFile": "s04.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Sensual Balcony Night – Melody Vibes (Lofi R&B) ｜ Music Video_13e6d2c2.mp4",
     "sizeBytes": 55000000,
-    "duration": "3:50"
+    "duration": "3:50",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 5,
+    "id": 15,
     "title": "Soft Cycling Escape",
     "genre": "Chill R&B",
     "videoFile": "s05.mp4",
     "srtFile": "s05.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Soft Cycling Escape – Melody Vibes (Chill R&B) ｜ Music Video_e808c01a.mp4",
     "sizeBytes": 51000000,
-    "duration": "4:10"
+    "duration": "4:10",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 6,
+    "id": 16,
     "title": "Midnight Crystal Glow",
     "genre": "Chill R&B",
     "videoFile": "s06.mp4",
     "srtFile": "s06.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Midnight Crystal Glow – Melody Vibes (Chill R&B) ｜ Music Video_1f92af9c.mp4",
     "sizeBytes": 54000000,
-    "duration": "4:15"
+    "duration": "4:15",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 7,
+    "id": 17,
     "title": "Rainy Day Glow",
     "genre": "R&B Ballad",
     "videoFile": "s07.mp4",
     "srtFile": "s07.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Rainy Day Glow – Melody Vibes (R&B Ballad) ｜ Official Music Video_34f6c27d.mp4",
     "sizeBytes": 60000000,
-    "duration": "4:05"
+    "duration": "4:05",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 8,
+    "id": 18,
     "title": "Wrapped in Sunlight",
     "genre": "Lofi Acoustic",
     "videoFile": "s08.mp4",
     "srtFile": "s08.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663402338004/U5sxarFP3UyJLGqDRCH44e/YTDown.com_YouTube_Wrapped-in-Sunlight-Melody-Vibes-Lofi-Ac_Media_DEhaN2cU--w_001_1080p_a9de5ec2.mp4",
     "sizeBytes": 59973207,
-    "duration": "3:45"
+    "duration": "3:45",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 9,
+    "id": 19,
     "title": "Memory of You",
     "genre": "R&B Ballad",
     "videoFile": "s09.mp4",
     "srtFile": "s09.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Memory of You – Melody Vibes (R&B Ballad) ｜ Music Video_1fac425a.mp4",
     "sizeBytes": 57000000,
-    "duration": "4:30"
+    "duration": "4:30",
+    "videoUrl": null,
+    "lyricUrl": null
   },
   {
-    "id": 10,
+    "id": 20,
     "title": "Rainy Day Nostalgia",
     "genre": "Chill R&B",
     "videoFile": "s10.mp4",
     "srtFile": "s10.vtt",
     "downloadUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663304788626/RYX8wjfbqLaLhWLqiqYGNV/🎧 Rainy Day Nostalgia – Melody Vibes (Chill R&B) ｜ Music Video_1ef851d6.mp4",
     "sizeBytes": 53000000,
-    "duration": "4:20"
+    "duration": "4:20",
+    "videoUrl": null,
+    "lyricUrl": null
   }
 ]
