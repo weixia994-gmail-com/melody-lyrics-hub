@@ -1,105 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Melody Lyrics Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" crossorigin src="./assets/index-DENqj6VS.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C6G_3qQV.css">
-  </head>
-  <body>
-    <div id="root"></div>
-
-    <!-- Lightweight preview modal (non-invasive patch on top of static build) -->
-    <div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:24px;">
-      <div style="position:relative;width:min(1100px,96vw);max-height:92vh;">
-        <button id="preview-close" aria-label="Close" style="position:absolute;top:-40px;right:0;background:#111827;color:#fff;border:1px solid #374151;border-radius:10px;padding:6px 12px;cursor:pointer;">关闭</button>
-        <video id="preview-video" controls playsinline style="width:100%;max-height:92vh;background:#000;border-radius:12px;" preload="metadata"></video>
-      </div>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>极简循环播放器</title>
+  <style>
+    html,body{margin:0;background:#000;height:100%;font-family:Arial,sans-serif;color:#fff}
+    .wrap{height:100%;display:flex;flex-direction:column}
+    video{width:100%;height:calc(100% - 72px);background:#000;object-fit:contain}
+    .bar{height:72px;display:flex;gap:10px;align-items:center;justify-content:center;background:#0b0b0b;border-top:1px solid #222;flex-wrap:wrap}
+    button{padding:10px 16px;border:1px solid #333;background:#111;color:#fff;border-radius:8px;font-size:15px;cursor:pointer}
+    button:hover{background:#1a1a1a}
+    .playing{background:#1f6feb;border-color:#3b82f6}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <video id="v" controls playsinline preload="metadata"></video>
+    <div class="bar">
+      <button id="prev">上一首</button>
+      <button id="play">播放</button>
+      <button id="next">下一首</button>
+      <button id="mode">模式：顺序循环</button>
     </div>
+  </div>
+<script>
+  let tracks=[];
+  let i=0, shuffle=false;
+  const v=document.getElementById('v');
+  const playBtn=document.getElementById('play');
+  const modeBtn=document.getElementById('mode');
 
-    <script>
-      (function () {
-        const modal = document.getElementById('preview-modal');
-        const video = document.getElementById('preview-video');
-        const closeBtn = document.getElementById('preview-close');
+  function syncPlayBtn(){ if(v.paused){playBtn.textContent='播放';playBtn.classList.remove('playing')} else {playBtn.textContent='暂停';playBtn.classList.add('playing')} }
+  function playIdx(idx,autoplay=true){ if(!tracks.length) return; i=(idx+tracks.length)%tracks.length; v.src=tracks[i]; if(autoplay) v.play().catch(()=>{}); }
+  function next(){ if(!tracks.length) return; if(shuffle){ let n=i; while(tracks.length>1 && n===i) n=Math.floor(Math.random()*tracks.length); playIdx(n,true);} else playIdx(i+1,true); }
+  function prev(){ if(!tracks.length) return; if(shuffle){ let n=i; while(tracks.length>1 && n===i) n=Math.floor(Math.random()*tracks.length); playIdx(n,true);} else playIdx(i-1,true); }
+  function togglePlay(){ if(v.paused) v.play().catch(()=>{}); else v.pause(); }
+  function toggleMode(){ shuffle=!shuffle; modeBtn.textContent='模式：' + (shuffle ? '随机播放' : '顺序循环'); }
 
-        function openPreview(url) {
-          video.src = url;
-          modal.style.display = 'flex';
-          video.currentTime = 0;
-          video.play().catch(() => {});
-        }
+  document.getElementById('next').onclick=next;
+  document.getElementById('prev').onclick=prev;
+  playBtn.onclick=togglePlay;
+  modeBtn.onclick=toggleMode;
+  v.addEventListener('ended',next);
+  v.addEventListener('play',syncPlayBtn);
+  v.addEventListener('pause',syncPlayBtn);
+  v.addEventListener('loadeddata',syncPlayBtn);
 
-        function closePreview() {
-          video.pause();
-          video.removeAttribute('src');
-          video.load();
-          modal.style.display = 'none';
-        }
-
-        // Click triangle/cover area => preview
-        // Click Video button => keep original download behavior
-        function enhanceCards() {
-          const cards = document.querySelectorAll('div.group');
-          cards.forEach((card) => {
-            const cover = card.querySelector('.aspect-video');
-            const videoBtn = card.querySelector('a[href$=".mp4"]');
-            if (!cover || !videoBtn || cover.dataset.enhanced === '1') return;
-
-            const src = videoBtn.getAttribute('href');
-            cover.dataset.enhanced = '1';
-            cover.style.position = 'relative';
-            cover.style.overflow = 'hidden';
-            cover.style.cursor = 'pointer';
-
-            // thumbnail in square: legacy tracks use jpg poster; current tracks use looping video
-            const legacyMatch = src.match(/\/downloads\/legacy\/(s\d{2})\.mp4/i);
-            if (legacyMatch) {
-              const key = legacyMatch[1];
-              cover.innerHTML = `
-                <img src="./downloads/legacy/${key}.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.9;background:#111827" />
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
-                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
-                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
-                  </div>
-                </div>
-              `;
-            } else {
-              cover.innerHTML = `
-                <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
-                  <source src="${src}" type="video/mp4" />
-                </video>
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
-                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
-                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
-                  </div>
-                </div>
-              `;
-              const thumbVideo = cover.querySelector('video');
-              thumbVideo && thumbVideo.play().catch(() => {});
-            }
-
-            cover.addEventListener('click', function () {
-              openPreview(src);
-            });
-          });
-        }
-
-        // initial + retry for React render timing
-        enhanceCards();
-        const timer = setInterval(enhanceCards, 1200);
-        setTimeout(() => clearInterval(timer), 20000);
-
-        closeBtn.addEventListener('click', closePreview);
-        modal.addEventListener('click', function (e) {
-          if (e.target === modal) closePreview();
-        });
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape' && modal.style.display !== 'none') closePreview();
-        });
-      })();
-    </script>
-  </body>
+  fetch('./songs_metadata.json',{cache:'no-store'}).then(r=>r.json()).then(data=>{
+    tracks=(data||[]).map(x=>x.downloadUrl).filter(Boolean).slice(0,10);
+    if(!tracks.length) throw new Error('no tracks');
+    playIdx(0,false); syncPlayBtn();
+  }).catch(()=>{ document.body.insertAdjacentHTML('beforeend','<div style="position:fixed;left:10px;bottom:8px;color:#f66;font-size:12px">加载播放列表失败</div>'); });
+</script>
+</body>
 </html>
