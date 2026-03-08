@@ -26,6 +26,10 @@
         const closeBtn = document.getElementById('preview-close');
 
         function openPreview(url) {
+          if (/youtube\.com\/watch\?v=|youtu\.be\//i.test(url)) {
+            window.open(url, '_blank', 'noopener');
+            return;
+          }
           video.src = url;
           modal.style.display = 'flex';
           video.currentTime = 0;
@@ -45,7 +49,10 @@
           const cards = document.querySelectorAll('div.group');
           cards.forEach((card) => {
             const cover = card.querySelector('.aspect-video');
-            const videoBtn = card.querySelector('a[href$=".mp4"]');
+            const links = Array.from(card.querySelectorAll('a[href]'));
+            const videoBtn = links.find(a => /youtube\.com\/watch\?v=|youtu\.be\//i.test(a.getAttribute('href')||''))
+              || links.find(a => /\.mp4($|\?)/i.test(a.getAttribute('href')||''))
+              || links[0];
             if (!cover || !videoBtn || cover.dataset.enhanced === '1') return;
 
             const src = videoBtn.getAttribute('href');
@@ -60,6 +67,15 @@
               const key = legacyMatch[1];
               cover.innerHTML = `
                 <img src="./downloads/legacy/${key}.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.9;background:#111827" />
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
+                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
+                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
+                  </div>
+                </div>
+              `;
+            } else if (/youtube\.com\/watch\?v=|youtu\.be\//i.test(src)) {
+              cover.innerHTML = `
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#111827,#1f2937);"></div>
                 <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
                   <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
                     <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
