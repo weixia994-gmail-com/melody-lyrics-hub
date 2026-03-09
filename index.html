@@ -10,49 +10,5 @@
   </head>
   <body>
     <div id="root"></div>
-
-    <!-- Lightweight preview modal (non-invasive patch on top of static build) -->
-    <div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:24px;">
-      <div style="position:relative;width:min(1100px,96vw);max-height:92vh;">
-        <button id="preview-close" aria-label="Close" style="position:absolute;top:-40px;right:0;background:#111827;color:#fff;border:1px solid #374151;border-radius:10px;padding:6px 12px;cursor:pointer;">关闭</button>
-        <video id="preview-video" controls playsinline style="width:100%;max-height:92vh;background:#000;border-radius:12px;" preload="metadata"></video>
-      </div>
-    </div>
-
-    <script>
-      // Minimal stable behavior: keep native card UI, only enforce button links.
-      (function () {
-        function patchButtons() {
-          const cards = document.querySelectorAll('div.group');
-          cards.forEach((card) => {
-            const links = Array.from(card.querySelectorAll('a[href]'));
-            if (!links.length) return;
-            const videoBtn = links[0];
-            const lyricsBtn = links[1] || null;
-            const src = videoBtn.getAttribute('href') || '';
-
-            const y1 = src.match(/[?&]v=([A-Za-z0-9_-]{11})/i);
-            const y2 = src.match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
-            const y3 = src.match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
-            const ytid = (y1 && y1[1]) || (y2 && y2[1]) || (y3 && y3[1]) || null;
-
-            if (ytid) {
-              videoBtn.href = `https://www.youtube.com/watch?v=${ytid}`;
-              videoBtn.target = '_blank';
-              videoBtn.rel = 'noopener';
-            }
-
-            if (lyricsBtn && src.endsWith('.mp4')) {
-              lyricsBtn.href = src.replace(/\.mp4(\?.*)?$/i, '.vtt');
-              lyricsBtn.setAttribute('download', '');
-            }
-          });
-        }
-
-        patchButtons();
-        const t = setInterval(patchButtons, 1000);
-        setTimeout(() => clearInterval(t), 20000);
-      })();
-    </script>
   </body>
 </html>
