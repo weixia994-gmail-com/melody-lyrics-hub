@@ -12,9 +12,6 @@
     .row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
     .btn{padding:9px 13px;border-radius:10px;border:1px solid #344465;background:#1a2640;color:#fff;cursor:pointer}
     .btn.on{background:#2e6bff;border-color:#2e6bff}
-    .meta{font-size:14px;color:#c2d0f0}
-    .title{font-size:20px;font-weight:700;margin:8px 0}
-    .sub{font-size:12px;color:#93a3c8}
       </style>
 </head>
 <body>
@@ -26,20 +23,14 @@
     }
   </script>
   <div class="wrap">
-    <h2>🎵 10-Music Shuttle Player</h2>
-    <div class="sub">默认随机播放（Shuffle）｜支持上一首/下一首/循环</div>
-
     <div class="card">
       <video id="player" controls playsinline preload="metadata"></video>
-      <div class="title" id="title">加载中...</div>
-      <div class="meta" id="meta">-</div>
-
       <div class="row">
-        <button class="btn" id="prev">⏮ Prev</button>
-        <button class="btn" id="play">▶ Play</button>
-        <button class="btn" id="next">⏭ Next</button>
-        <button class="btn on" id="shuffle">🔀 Shuffle: ON</button>
-        <button class="btn" id="loop">🔁 Loop One: OFF</button>
+        <button class="btn" id="prev">⏮</button>
+        <button class="btn" id="play">▶</button>
+        <button class="btn" id="next">⏭</button>
+        <button class="btn on" id="shuffle">🔀</button>
+        <button class="btn" id="loop">🔁</button>
         </div>
 
       
@@ -49,8 +40,6 @@
 <script>
 (async function(){
   const v=document.getElementById('player');
-  const elTitle=document.getElementById('title');
-  const elMeta=document.getElementById('meta');
   const bPrev=document.getElementById('prev');
   const bPlay=document.getElementById('play');
   const bNext=document.getElementById('next');
@@ -82,9 +71,9 @@
     idx=(newIdx+songs.length)%songs.length;
     const s=songs[idx];
     v.src=s.videoUrl||s.downloadUrl;
-    elTitle.textContent=s.title||s.slug;
-    elMeta.textContent=`${s.slug} · ${s.videoFile}`;
-    if (autoPlay) v.play().catch(()=>{});
+    if (autoPlay) {
+      v.play().then(()=>{ bPlay.textContent='⏸'; }).catch(()=>{});
+    }
   }
 
   v.addEventListener('ended',()=>{
@@ -97,24 +86,25 @@
     const s=songs[idx];
     if(s.youtubeUrl) window.open(s.youtubeUrl,'_blank','noopener');
   };
+  v.addEventListener('play', ()=>{ bPlay.textContent='⏸'; });
+  v.addEventListener('pause', ()=>{ bPlay.textContent='▶'; });
 
   bPrev.onclick=()=>setSong(pickPrevIndex(),true);
   bNext.onclick=()=>{ history.push(idx); setSong(pickNextIndex(),true); };
-  bPlay.onclick=()=> v.paused ? v.play().catch(()=>{}) : v.pause();
+  bPlay.onclick=()=>{ if(v.paused){ v.play().catch(()=>{}); bPlay.textContent='⏸'; } else { v.pause(); bPlay.textContent='▶'; } };
 
   bShuffle.onclick=()=>{
     shuffle=!shuffle;
     bShuffle.classList.toggle('on',shuffle);
-    bShuffle.textContent=`🔀 Shuffle: ${shuffle?'ON':'OFF'}`;
   };
 
   bLoop.onclick=()=>{
     loopOne=!loopOne;
     bLoop.classList.toggle('on',loopOne);
-    bLoop.textContent=`🔁 Loop One: ${loopOne?'ON':'OFF'}`;
   };
 
   setSong(idx,true);
+  bPlay.textContent = "⏸";
 })();
 </script>
 </body>
