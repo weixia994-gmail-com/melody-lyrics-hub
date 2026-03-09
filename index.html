@@ -10,5 +10,41 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        function patchCards() {
+          const cards = document.querySelectorAll('div.group');
+          cards.forEach((card) => {
+            if (card.dataset.patched === '1') return;
+            const cover = card.querySelector('.aspect-video');
+            const links = Array.from(card.querySelectorAll('a[href]'));
+            const videoBtn = links[0];
+            if (!cover || !videoBtn) return;
+
+            const href = videoBtn.getAttribute('href') || '';
+            const m1 = href.match(/[?&]v=([A-Za-z0-9_-]{11})/i);
+            const m2 = href.match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
+            const ytid = (m1 && m1[1]) || (m2 && m2[1]) || null;
+
+            if (ytid) {
+              cover.style.backgroundImage = `url(https://img.youtube.com/vi/${ytid}/hqdefault.jpg)`;
+              cover.style.backgroundSize = 'cover';
+              cover.style.backgroundPosition = 'center';
+            }
+
+            cover.style.cursor = 'pointer';
+            cover.addEventListener('click', () => {
+              window.open(videoBtn.href, '_blank', 'noopener');
+            });
+
+            card.dataset.patched = '1';
+          });
+        }
+
+        patchCards();
+        const t = setInterval(patchCards, 1000);
+        setTimeout(() => clearInterval(t), 20000);
+      })();
+    </script>
   </body>
 </html>
