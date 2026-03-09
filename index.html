@@ -123,7 +123,7 @@
               `;
             } else if (ytid) {
               cover.innerHTML = `
-                <img id="thumb-${ytid}" src="https://i.ytimg.com/vi/${ytid}/hqdefault.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.92;background:#111827" loading="lazy" referrerpolicy="no-referrer" />
+                <img id="thumb-${ytid}" src="https://img.youtube.com/vi/${ytid}/hqdefault.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.92;background:#111827" loading="lazy" referrerpolicy="no-referrer" />
                 <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
                   <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
                     <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
@@ -134,6 +134,12 @@
               const img = cover.querySelector('img');
               if (img) {
                 img.onerror = () => {
+                  // 2nd chance on alternative YouTube image host
+                  if (!img.dataset.retry2) {
+                    img.dataset.retry2 = '1';
+                    img.src = `https://i.ytimg.com/vi/${ytid}/hqdefault.jpg`;
+                    return;
+                  }
                   cover.innerHTML = `
                     <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
                       <source src="${src}" type="video/mp4" />
