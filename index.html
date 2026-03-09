@@ -26,12 +26,13 @@
     <div class="card">
       <video id="player" controls playsinline preload="metadata"></video>
       <div class="row">
-        <button class="btn" id="prev">Prev</button>
-        <button class="btn" id="play">Pause</button>
-        <button class="btn" id="next">Next</button>
-        <button class="btn on" id="shuffle">Shuffle ON</button>
-        <button class="btn" id="loop">Loop OFF</button>
-        </div>
+        <button class="btn" id="prev">⏮ Prev</button>
+        <button class="btn" id="play">⏸ Pause</button>
+        <button class="btn" id="next">⏭ Next</button>
+        <button class="btn on" id="shuffle">🔀 Shuffle</button>
+        <button class="btn" id="loop">🔁 Loop</button>
+        <button class="btn" id="mode10">🎯 10 Songs</button>
+      </div>
 
       
     </div>
@@ -45,31 +46,40 @@
   const bNext=document.getElementById('next');
   const bShuffle=document.getElementById('shuffle');
   const bLoop=document.getElementById('loop');
+  const bMode10=document.getElementById('mode10');
 
   const res=await fetch('./songs_metadata.json?t='+Date.now());
   const songs=await res.json();
 
-  let idx=Math.floor(Math.random()*songs.length);
+  let mode10=false;
+  let pool=songs;
+  let idx=Math.floor(Math.random()*pool.length);
   let shuffle=true;
   let loopOne=false;
   const history=[];
 
+  function rebuildPool(){
+    pool = mode10 ? songs.slice(0,10) : songs;
+    if (idx >= pool.length) idx = 0;
+    history.length = 0;
+  }
+
   function pickNextIndex(){
-    if (!shuffle) return (idx+1)%songs.length;
-    if (songs.length<=1) return idx;
+    if (!shuffle) return (idx+1)%pool.length;
+    if (pool.length<=1) return idx;
     let n=idx;
-    while(n===idx) n=Math.floor(Math.random()*songs.length);
+    while(n===idx) n=Math.floor(Math.random()*pool.length);
     return n;
   }
 
   function pickPrevIndex(){
     if (history.length>0) return history.pop();
-    return (idx-1+songs.length)%songs.length;
+    return (idx-1+pool.length)%pool.length;
   }
 
   function setSong(newIdx,autoPlay=true){
-    idx=(newIdx+songs.length)%songs.length;
-    const s=songs[idx];
+    idx=(newIdx+pool.length)%pool.length;
+    const s=pool[idx];
     v.src=s.videoUrl||s.downloadUrl;
     if (autoPlay) {
       v.play().then(()=>{ bPlay.textContent='⏸'; }).catch(()=>{});
@@ -83,30 +93,37 @@
   });
 
   v.onerror=()=>{
-    const s=songs[idx];
+    const s=pool[idx];
     if(s.youtubeUrl) window.open(s.youtubeUrl,'_blank','noopener');
   };
-  v.addEventListener('play', ()=>{ bPlay.textContent='Pause'; });
-  v.addEventListener('pause', ()=>{ bPlay.textContent='Play'; });
+  v.addEventListener('play', ()=>{ bPlay.textContent='⏸ Pause'; });
+  v.addEventListener('pause', ()=>{ bPlay.textContent='▶ Play'; });
 
   bPrev.onclick=()=>setSong(pickPrevIndex(),true);
   bNext.onclick=()=>{ history.push(idx); setSong(pickNextIndex(),true); };
-  bPlay.onclick=()=>{ if(v.paused){ v.play().catch(()=>{}); bPlay.textContent='Pause'; } else { v.pause(); bPlay.textContent='Play'; } };
+  bPlay.onclick=()=>{ if(v.paused){ v.play().catch(()=>{}); bPlay.textContent='⏸ Pause'; } else { v.pause(); bPlay.textContent='▶ Play'; } };
 
   bShuffle.onclick=()=>{
     shuffle=!shuffle;
     bShuffle.classList.toggle('on',shuffle);
-    bShuffle.textContent = shuffle ? 'Shuffle ON' : 'Shuffle OFF';
   };
 
   bLoop.onclick=()=>{
     loopOne=!loopOne;
     bLoop.classList.toggle('on',loopOne);
-    bLoop.textContent = loopOne ? 'Loop ON' : 'Loop OFF';
   };
 
+  bMode10.onclick=()=>{
+    mode10=!mode10;
+    bMode10.classList.toggle('on',mode10);
+    rebuildPool();
+    idx=Math.floor(Math.random()*pool.length);
+    setSong(idx,true);
+  };
+
+  rebuildPool();
   setSong(idx,true);
-  bPlay.textContent = "Pause";
+  bPlay.textContent = "⏸ Pause";
 })();
 </script>
 </body>
