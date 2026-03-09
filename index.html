@@ -61,8 +61,18 @@
             cover.style.overflow = 'hidden';
             cover.style.cursor = 'pointer';
 
-            // thumbnail in square: legacy tracks use jpg poster; current tracks use looping video
+            // thumbnail: legacy jpg > YouTube poster (for yt links and mv-xxxx-ytid.mp4) > mp4 preview
             const legacyMatch = src.match(/\/downloads\/legacy\/(s\d{2})\.mp4/i);
+            const ytid = (() => {
+              const y1 = src.match(/[?&]v=([A-Za-z0-9_-]{11})/i);
+              if (y1) return y1[1];
+              const y2 = src.match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
+              if (y2) return y2[1];
+              const y3 = src.match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
+              if (y3) return y3[1];
+              return null;
+            })();
+
             if (legacyMatch) {
               const key = legacyMatch[1];
               cover.innerHTML = `
@@ -73,9 +83,9 @@
                   </div>
                 </div>
               `;
-            } else if (/youtube\.com\/watch\?v=|youtu\.be\//i.test(src)) {
+            } else if (ytid) {
               cover.innerHTML = `
-                <div style="width:100%;height:100%;background:linear-gradient(135deg,#111827,#1f2937);"></div>
+                <img src="https://i.ytimg.com/vi/${ytid}/hqdefault.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.92;background:#111827" loading="lazy" referrerpolicy="no-referrer" />
                 <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
                   <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
                     <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
