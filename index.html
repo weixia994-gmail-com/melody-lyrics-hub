@@ -26,14 +26,31 @@
         const closeBtn = document.getElementById('preview-close');
 
         function openPreview(url) {
+          const y1 = (url || '').match(/[?&]v=([A-Za-z0-9_-]{11})/i);
+          const y2 = (url || '').match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
+          const y3 = (url || '').match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
+          const ytid = (y1 && y1[1]) || (y2 && y2[1]) || (y3 && y3[1]) || null;
+
           if (/youtube\.com\/watch\?v=|youtu\.be\//i.test(url)) {
             window.open(url, '_blank', 'noopener');
             return;
           }
+
+          // If worker URL eventually redirects to a non-mp4 page (e.g. YouTube fallback), auto-jump to YouTube.
+          video.onerror = function () {
+            if (ytid) window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
+            closePreview();
+          };
+
           video.src = url;
           modal.style.display = 'flex';
           video.currentTime = 0;
-          video.play().catch(() => {});
+          video.play().catch(() => {
+            if (ytid) {
+              window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
+              closePreview();
+            }
+          });
         }
 
         function closePreview() {
