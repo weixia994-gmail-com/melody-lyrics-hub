@@ -16,7 +16,9 @@
           const cards = document.querySelectorAll('div.group');
           cards.forEach((card) => {
             if (card.dataset.patched === '1') return;
-            const cover = card.querySelector('.aspect-video');
+            const cover = card.querySelector('.aspect-video')
+              || card.querySelector('div[class*="aspect"]')
+              || card.firstElementChild;
             const links = Array.from(card.querySelectorAll('a[href]'));
             const videoBtn = links[0];
             if (!cover || !videoBtn) return;
