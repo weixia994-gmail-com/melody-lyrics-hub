@@ -1,133 +1,134 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Melody Lyrics Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" crossorigin src="./assets/index-DENqj6VS.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C6G_3qQV.css">
-  </head>
-  <body>
-    <div id="root"></div>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>10 Music Videos - Shuttle Player</title>
+  <style>
+    body{margin:0;background:#0b1020;color:#eaf1ff;font-family:Arial,sans-serif}
+    .wrap{max-width:1200px;margin:16px auto;padding:0 12px}
+    .card{background:#121a2b;border:1px solid #2b3854;border-radius:14px;padding:12px}
+    video{width:100%;max-height:68vh;background:#000;border-radius:12px}
+    .row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .btn{padding:9px 13px;border-radius:10px;border:1px solid #344465;background:#1a2640;color:#fff;cursor:pointer}
+    .btn.on{background:#2e6bff;border-color:#2e6bff}
+    .meta{font-size:14px;color:#c2d0f0}
+    .title{font-size:20px;font-weight:700;margin:8px 0}
+    .sub{font-size:12px;color:#93a3c8}
+    .queue{margin-top:10px;max-height:240px;overflow:auto}
+    .item{padding:8px;border:1px solid #2c3955;border-radius:10px;margin-bottom:6px}
+    .item.active{border-color:#5ea2ff;background:#0f223f}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>🎵 10-Music Shuttle Player</h2>
+    <div class="sub">默认随机播放（Shuffle）｜支持上一首/下一首/循环</div>
 
-    <!-- Stable in-site preview modal -->
-    <div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:24px;">
-      <div style="position:relative;width:min(1100px,96vw);max-height:92vh;">
-        <button id="preview-close" aria-label="Close" style="position:absolute;top:-40px;right:0;background:#111827;color:#fff;border:1px solid #374151;border-radius:10px;padding:6px 12px;cursor:pointer;">关闭</button>
-        <video id="preview-video" controls playsinline style="width:100%;max-height:92vh;background:#000;border-radius:12px;" preload="metadata"></video>
+    <div class="card">
+      <video id="player" controls playsinline preload="metadata"></video>
+      <div class="title" id="title">加载中...</div>
+      <div class="meta" id="meta">-</div>
+
+      <div class="row">
+        <button class="btn" id="prev">⏮ Prev</button>
+        <button class="btn" id="play">▶ Play</button>
+        <button class="btn" id="next">⏭ Next</button>
+        <button class="btn on" id="shuffle">🔀 Shuffle: ON</button>
+        <button class="btn" id="loop">🔁 Loop One: OFF</button>
+        <a class="btn" id="yt" href="#" target="_blank" rel="noopener" style="text-decoration:none">YouTube</a>
       </div>
+
+      <div class="queue" id="queue"></div>
     </div>
+  </div>
 
-    <script>
-      (function () {
-        const modal = document.getElementById('preview-modal');
-        const video = document.getElementById('preview-video');
-        const closeBtn = document.getElementById('preview-close');
+<script>
+(async function(){
+  const v=document.getElementById('player');
+  const elTitle=document.getElementById('title');
+  const elMeta=document.getElementById('meta');
+  const q=document.getElementById('queue');
+  const bPrev=document.getElementById('prev');
+  const bPlay=document.getElementById('play');
+  const bNext=document.getElementById('next');
+  const bShuffle=document.getElementById('shuffle');
+  const bLoop=document.getElementById('loop');
+  const yt=document.getElementById('yt');
 
-        function ytidFrom(url) {
-          const a = (url || '').match(/[?&]v=([A-Za-z0-9_-]{11})/i);
-          const b = (url || '').match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
-          const c = (url || '').match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
-          return (a && a[1]) || (b && b[1]) || (c && c[1]) || null;
-        }
+  const res=await fetch('./songs_metadata.json?t='+Date.now());
+  const songs=await res.json();
 
-        function openPreview(src) {
-          const ytid = ytidFrom(src);
-          video.onerror = function () {
-            if (ytid) window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
-            closePreview();
-          };
-          video.src = src;
-          modal.style.display = 'flex';
-          video.currentTime = 0;
-          video.play().catch(() => {
-            if (ytid) window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
-            closePreview();
-          });
-        }
+  let idx=Math.floor(Math.random()*songs.length);
+  let shuffle=true;
+  let loopOne=false;
+  const history=[];
 
-        function closePreview() {
-          video.pause();
-          video.removeAttribute('src');
-          video.load();
-          modal.style.display = 'none';
-        }
+  function pickNextIndex(){
+    if (!shuffle) return (idx+1)%songs.length;
+    if (songs.length<=1) return idx;
+    let n=idx;
+    while(n===idx) n=Math.floor(Math.random()*songs.length);
+    return n;
+  }
 
-        function patchCards() {
-          const cards = document.querySelectorAll('div.group');
-          cards.forEach((card) => {
-            if (card.dataset.patched === '1') return;
+  function pickPrevIndex(){
+    if (history.length>0) return history.pop();
+    return (idx-1+songs.length)%songs.length;
+  }
 
-            const links = Array.from(card.querySelectorAll('a[href]'));
-            const videoBtn = links[0];
-            const lyricsBtn = links[1] || null;
-            if (!videoBtn) return;
+  function renderQueue(){
+    q.innerHTML='';
+    for(let i=0;i<12;i++){
+      const j=shuffle?Math.floor(Math.random()*songs.length):(idx+i+1)%songs.length;
+      const s=songs[j];
+      const d=document.createElement('div');
+      d.className='item'+(j===idx?' active':'');
+      d.innerHTML=`<div>${s.slug} · ${s.title}</div><div class="sub">${s.videoFile}</div>`;
+      q.appendChild(d);
+    }
+  }
 
-            const src = videoBtn.getAttribute('href') || '';
-            const ytid = ytidFrom(src);
+  function setSong(newIdx,autoPlay=true){
+    idx=(newIdx+songs.length)%songs.length;
+    const s=songs[idx];
+    v.src=s.videoUrl||s.downloadUrl;
+    elTitle.textContent=s.title||s.slug;
+    elMeta.textContent=`${s.slug} · ${s.videoFile}`;
+    yt.href=s.youtubeUrl||('#');
+    renderQueue();
+    if (autoPlay) v.play().catch(()=>{});
+  }
 
-            // 1) Video button: full download from our place
-            videoBtn.href = src;
-            videoBtn.setAttribute('download', '');
-            videoBtn.removeAttribute('target');
+  v.addEventListener('ended',()=>{
+    if(loopOne){ setSong(idx,true); return; }
+    history.push(idx);
+    setSong(pickNextIndex(),true);
+  });
 
-            // 2) Lyrics button: vtt from our place; if missing, stay on page
-            if (lyricsBtn && /\.mp4($|\?)/i.test(src)) {
-              const lyricsUrl = src.replace(/\.mp4(\?.*)?$/i, '.vtt');
-              lyricsBtn.href = lyricsUrl;
-              lyricsBtn.setAttribute('download', '');
-              lyricsBtn.removeAttribute('target');
-              lyricsBtn.addEventListener('click', async function (e) {
-                e.preventDefault();
-                try {
-                  const r = await fetch(lyricsUrl, { method: 'HEAD' });
-                  if (r.ok) {
-                    window.location.href = lyricsUrl;
-                    return;
-                  }
-                } catch (_) {}
-                lyricsBtn.style.opacity = '0.6';
-                lyricsBtn.textContent = 'No Lyrics';
-                setTimeout(() => { lyricsBtn.textContent = 'Lyrics'; lyricsBtn.style.opacity = ''; }, 1800);
-              });
-            }
+  v.onerror=()=>{
+    const s=songs[idx];
+    if(s.youtubeUrl) window.open(s.youtubeUrl,'_blank','noopener');
+  };
 
-            // 3) Center cover click: in-site modal playback with close
-            const cover = card.querySelector('.aspect-video')
-              || card.querySelector('div[class*="aspect"]')
-              || card.firstElementChild;
-            if (cover) {
-              cover.style.cursor = 'pointer';
-              cover.addEventListener('click', function (e) {
-                e.preventDefault();
-                openPreview(src);
-              });
+  bPrev.onclick=()=>setSong(pickPrevIndex(),true);
+  bNext.onclick=()=>{ history.push(idx); setSong(pickNextIndex(),true); };
+  bPlay.onclick=()=> v.paused ? v.play().catch(()=>{}) : v.pause();
 
-              // thumbnail via YouTube poster; if blocked keep default gradient
-              if (ytid) {
-                cover.style.backgroundImage = `url(https://img.youtube.com/vi/${ytid}/hqdefault.jpg)`;
-                cover.style.backgroundSize = 'cover';
-                cover.style.backgroundPosition = 'center';
-              }
-            }
+  bShuffle.onclick=()=>{
+    shuffle=!shuffle;
+    bShuffle.classList.toggle('on',shuffle);
+    bShuffle.textContent=`🔀 Shuffle: ${shuffle?'ON':'OFF'}`;
+  };
 
-            card.dataset.patched = '1';
-          });
-        }
+  bLoop.onclick=()=>{
+    loopOne=!loopOne;
+    bLoop.classList.toggle('on',loopOne);
+    bLoop.textContent=`🔁 Loop One: ${loopOne?'ON':'OFF'}`;
+  };
 
-        patchCards();
-        const t = setInterval(patchCards, 1000);
-        setTimeout(() => clearInterval(t), 25000);
-
-        closeBtn.addEventListener('click', closePreview);
-        modal.addEventListener('click', function (e) {
-          if (e.target === modal) closePreview();
-        });
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape' && modal.style.display !== 'none') closePreview();
-        });
-      })();
-    </script>
-  </body>
+  setSong(idx,true);
+})();
+</script>
+</body>
 </html>
