@@ -82,7 +82,7 @@
     const s=pool[idx];
     v.src=s.videoUrl||s.downloadUrl;
     if (autoPlay) {
-      v.play().then(()=>{ bPlay.textContent='⏸'; }).catch(()=>{});
+      v.play().then(()=>{ bPlay.textContent='⏸ Pause'; }).catch(()=>{});
     }
   }
 
