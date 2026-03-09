@@ -20,173 +20,38 @@
     </div>
 
     <script>
+      // Minimal stable behavior: keep native card UI, only enforce button links.
       (function () {
-        const modal = document.getElementById('preview-modal');
-        const video = document.getElementById('preview-video');
-        const closeBtn = document.getElementById('preview-close');
-
-        function openPreview(url) {
-          const y1 = (url || '').match(/[?&]v=([A-Za-z0-9_-]{11})/i);
-          const y2 = (url || '').match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
-          const y3 = (url || '').match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
-          const ytid = (y1 && y1[1]) || (y2 && y2[1]) || (y3 && y3[1]) || null;
-
-          if (/youtube\.com\/watch\?v=|youtu\.be\//i.test(url)) {
-            window.open(url, '_blank', 'noopener');
-            return;
-          }
-
-          // If worker URL eventually redirects to a non-mp4 page (e.g. YouTube fallback), auto-jump to YouTube.
-          video.onerror = function () {
-            if (ytid) window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
-            closePreview();
-          };
-
-          video.src = url;
-          modal.style.display = 'flex';
-          video.currentTime = 0;
-          video.play().catch(() => {
-            if (ytid) {
-              window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
-              closePreview();
-            }
-          });
-        }
-
-        function closePreview() {
-          video.pause();
-          video.removeAttribute('src');
-          video.load();
-          modal.style.display = 'none';
-        }
-
-        // Click triangle/cover area => preview
-        // Click Video button => keep original download behavior
-        function enhanceCards() {
+        function patchButtons() {
           const cards = document.querySelectorAll('div.group');
           cards.forEach((card) => {
-            const cover = card.querySelector('.aspect-video');
             const links = Array.from(card.querySelectorAll('a[href]'));
-            const videoBtn = links.find(a => /youtube\.com\/watch\?v=|youtu\.be\//i.test(a.getAttribute('href')||''))
-              || links.find(a => /\.mp4($|\?)/i.test(a.getAttribute('href')||''))
-              || links[0];
-            if (!cover || !videoBtn || cover.dataset.enhanced === '1') return;
+            if (!links.length) return;
+            const videoBtn = links[0];
+            const lyricsBtn = links[1] || null;
+            const src = videoBtn.getAttribute('href') || '';
 
-            const src = videoBtn.getAttribute('href');
-
-            // Enforce button behavior:
-            // - Video button => YouTube
-            // - Lyrics button => .vtt on melody2 domain
-            const y1 = (src || '').match(/[?&]v=([A-Za-z0-9_-]{11})/i);
-            const y2 = (src || '').match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
-            const y3 = (src || '').match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
+            const y1 = src.match(/[?&]v=([A-Za-z0-9_-]{11})/i);
+            const y2 = src.match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
+            const y3 = src.match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
             const ytid = (y1 && y1[1]) || (y2 && y2[1]) || (y3 && y3[1]) || null;
-            const vttUrl = src ? src.replace(/\.mp4(\?.*)?$/i, '.vtt') : null;
-            const allLinks = Array.from(card.querySelectorAll('a[href]'));
-            const lyricsBtn = allLinks.find(a => /\.vtt($|\?)/i.test(a.getAttribute('href')||'')) || allLinks[1];
-            if (videoBtn && ytid) {
-              videoBtn.setAttribute('href', `https://www.youtube.com/watch?v=${ytid}`);
-              videoBtn.setAttribute('target', '_blank');
-              videoBtn.setAttribute('rel', 'noopener');
+
+            if (ytid) {
+              videoBtn.href = `https://www.youtube.com/watch?v=${ytid}`;
+              videoBtn.target = '_blank';
+              videoBtn.rel = 'noopener';
             }
-            if (lyricsBtn && vttUrl) {
-              lyricsBtn.setAttribute('href', vttUrl);
+
+            if (lyricsBtn && src.endsWith('.mp4')) {
+              lyricsBtn.href = src.replace(/\.mp4(\?.*)?$/i, '.vtt');
               lyricsBtn.setAttribute('download', '');
             }
-
-            cover.dataset.enhanced = '1';
-            cover.style.position = 'relative';
-            cover.style.overflow = 'hidden';
-            cover.style.cursor = 'pointer';
-
-            // thumbnail: legacy jpg > YouTube poster (for yt links and mv-xxxx-ytid.mp4) > mp4 preview
-            const legacyMatch = src.match(/\/downloads\/legacy\/(s\d{2})\.mp4/i);
-            const ytid = (() => {
-              const y1 = src.match(/[?&]v=([A-Za-z0-9_-]{11})/i);
-              if (y1) return y1[1];
-              const y2 = src.match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
-              if (y2) return y2[1];
-              const y3 = src.match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
-              if (y3) return y3[1];
-              return null;
-            })();
-
-            if (legacyMatch) {
-              const key = legacyMatch[1];
-              cover.innerHTML = `
-                <img src="./downloads/legacy/${key}.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.9;background:#111827" />
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
-                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
-                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
-                  </div>
-                </div>
-              `;
-            } else if (ytid) {
-              cover.innerHTML = `
-                <img id="thumb-${ytid}" src="https://img.youtube.com/vi/${ytid}/hqdefault.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.92;background:#111827" loading="lazy" referrerpolicy="no-referrer" />
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
-                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
-                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
-                  </div>
-                </div>
-              `;
-              // if YouTube image blocked, fallback to local mp4 first-frame preview
-              const img = cover.querySelector('img');
-              if (img) {
-                img.onerror = () => {
-                  // 2nd chance on alternative YouTube image host
-                  if (!img.dataset.retry2) {
-                    img.dataset.retry2 = '1';
-                    img.src = `https://i.ytimg.com/vi/${ytid}/hqdefault.jpg`;
-                    return;
-                  }
-                  cover.innerHTML = `
-                    <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
-                      <source src="${src}" type="video/mp4" />
-                    </video>
-                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
-                      <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
-                        <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
-                      </div>
-                    </div>
-                  `;
-                  const thumbVideo = cover.querySelector('video');
-                  thumbVideo && thumbVideo.play().catch(() => {});
-                };
-              }
-            } else {
-              cover.innerHTML = `
-                <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
-                  <source src="${src}" type="video/mp4" />
-                </video>
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
-                  <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
-                    <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
-                  </div>
-                </div>
-              `;
-              const thumbVideo = cover.querySelector('video');
-              thumbVideo && thumbVideo.play().catch(() => {});
-            }
-
-            cover.addEventListener('click', function () {
-              openPreview(src);
-            });
           });
         }
 
-        // initial + retry for React render timing
-        enhanceCards();
-        const timer = setInterval(enhanceCards, 1200);
-        setTimeout(() => clearInterval(timer), 20000);
-
-        closeBtn.addEventListener('click', closePreview);
-        modal.addEventListener('click', function (e) {
-          if (e.target === modal) closePreview();
-        });
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape' && modal.style.display !== 'none') closePreview();
-        });
+        patchButtons();
+        const t = setInterval(patchButtons, 1000);
+        setTimeout(() => clearInterval(t), 20000);
       })();
     </script>
   </body>
