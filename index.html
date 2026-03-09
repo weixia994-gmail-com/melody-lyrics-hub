@@ -15,10 +15,7 @@
     .meta{font-size:14px;color:#c2d0f0}
     .title{font-size:20px;font-weight:700;margin:8px 0}
     .sub{font-size:12px;color:#93a3c8}
-    .queue{margin-top:10px;max-height:240px;overflow:auto}
-    .item{padding:8px;border:1px solid #2c3955;border-radius:10px;margin-bottom:6px}
-    .item.active{border-color:#5ea2ff;background:#0f223f}
-  </style>
+      </style>
 </head>
 <body>
   <script>
@@ -43,10 +40,9 @@
         <button class="btn" id="next">⏭ Next</button>
         <button class="btn on" id="shuffle">🔀 Shuffle: ON</button>
         <button class="btn" id="loop">🔁 Loop One: OFF</button>
-        <a class="btn" id="yt" href="#" target="_blank" rel="noopener" style="text-decoration:none">YouTube</a>
-      </div>
+        </div>
 
-      <div class="queue" id="queue"></div>
+      
     </div>
   </div>
 
@@ -55,13 +51,11 @@
   const v=document.getElementById('player');
   const elTitle=document.getElementById('title');
   const elMeta=document.getElementById('meta');
-  const q=document.getElementById('queue');
   const bPrev=document.getElementById('prev');
   const bPlay=document.getElementById('play');
   const bNext=document.getElementById('next');
   const bShuffle=document.getElementById('shuffle');
   const bLoop=document.getElementById('loop');
-  const yt=document.getElementById('yt');
 
   const res=await fetch('./songs_metadata.json?t='+Date.now());
   const songs=await res.json();
@@ -84,26 +78,12 @@
     return (idx-1+songs.length)%songs.length;
   }
 
-  function renderQueue(){
-    q.innerHTML='';
-    for(let i=0;i<12;i++){
-      const j=shuffle?Math.floor(Math.random()*songs.length):(idx+i+1)%songs.length;
-      const s=songs[j];
-      const d=document.createElement('div');
-      d.className='item'+(j===idx?' active':'');
-      d.innerHTML=`<div>${s.slug} · ${s.title}</div><div class="sub">${s.videoFile}</div>`;
-      q.appendChild(d);
-    }
-  }
-
   function setSong(newIdx,autoPlay=true){
     idx=(newIdx+songs.length)%songs.length;
     const s=songs[idx];
     v.src=s.videoUrl||s.downloadUrl;
     elTitle.textContent=s.title||s.slug;
     elMeta.textContent=`${s.slug} · ${s.videoFile}`;
-    yt.href=s.youtubeUrl||('#');
-    renderQueue();
     if (autoPlay) v.play().catch(()=>{});
   }
 
