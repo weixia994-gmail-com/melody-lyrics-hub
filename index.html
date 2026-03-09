@@ -10,34 +10,93 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Stable in-site preview modal -->
+    <div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:24px;">
+      <div style="position:relative;width:min(1100px,96vw);max-height:92vh;">
+        <button id="preview-close" aria-label="Close" style="position:absolute;top:-40px;right:0;background:#111827;color:#fff;border:1px solid #374151;border-radius:10px;padding:6px 12px;cursor:pointer;">关闭</button>
+        <video id="preview-video" controls playsinline style="width:100%;max-height:92vh;background:#000;border-radius:12px;" preload="metadata"></video>
+      </div>
+    </div>
+
     <script>
       (function () {
+        const modal = document.getElementById('preview-modal');
+        const video = document.getElementById('preview-video');
+        const closeBtn = document.getElementById('preview-close');
+
+        function ytidFrom(url) {
+          const a = (url || '').match(/[?&]v=([A-Za-z0-9_-]{11})/i);
+          const b = (url || '').match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
+          const c = (url || '').match(/mv-\d{4}-([A-Za-z0-9_-]{11})\.mp4/i);
+          return (a && a[1]) || (b && b[1]) || (c && c[1]) || null;
+        }
+
+        function openPreview(src) {
+          const ytid = ytidFrom(src);
+          video.onerror = function () {
+            if (ytid) window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
+            closePreview();
+          };
+          video.src = src;
+          modal.style.display = 'flex';
+          video.currentTime = 0;
+          video.play().catch(() => {
+            if (ytid) window.open(`https://www.youtube.com/watch?v=${ytid}`, '_blank', 'noopener');
+            closePreview();
+          });
+        }
+
+        function closePreview() {
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+          modal.style.display = 'none';
+        }
+
         function patchCards() {
           const cards = document.querySelectorAll('div.group');
           cards.forEach((card) => {
             if (card.dataset.patched === '1') return;
+
+            const links = Array.from(card.querySelectorAll('a[href]'));
+            const videoBtn = links[0];
+            const lyricsBtn = links[1] || null;
+            if (!videoBtn) return;
+
+            const src = videoBtn.getAttribute('href') || '';
+            const ytid = ytidFrom(src);
+
+            // 1) Video button: full download from our place
+            videoBtn.href = src;
+            videoBtn.setAttribute('download', '');
+            videoBtn.removeAttribute('target');
+
+            // 2) Lyrics button: vtt from our place
+            if (lyricsBtn && /\.mp4($|\?)/i.test(src)) {
+              lyricsBtn.href = src.replace(/\.mp4(\?.*)?$/i, '.vtt');
+              lyricsBtn.setAttribute('download', '');
+              lyricsBtn.removeAttribute('target');
+            }
+
+            // 3) Center cover click: in-site modal playback with close
             const cover = card.querySelector('.aspect-video')
               || card.querySelector('div[class*="aspect"]')
               || card.firstElementChild;
-            const links = Array.from(card.querySelectorAll('a[href]'));
-            const videoBtn = links[0];
-            if (!cover || !videoBtn) return;
+            if (cover) {
+              cover.style.cursor = 'pointer';
+              cover.addEventListener('click', function (e) {
+                e.preventDefault();
+                openPreview(src);
+              });
 
-            const href = videoBtn.getAttribute('href') || '';
-            const m1 = href.match(/[?&]v=([A-Za-z0-9_-]{11})/i);
-            const m2 = href.match(/youtu\.be\/([A-Za-z0-9_-]{11})/i);
-            const ytid = (m1 && m1[1]) || (m2 && m2[1]) || null;
-
-            if (ytid) {
-              cover.style.backgroundImage = `url(https://img.youtube.com/vi/${ytid}/hqdefault.jpg)`;
-              cover.style.backgroundSize = 'cover';
-              cover.style.backgroundPosition = 'center';
+              // thumbnail via YouTube poster; if blocked keep default gradient
+              if (ytid) {
+                cover.style.backgroundImage = `url(https://img.youtube.com/vi/${ytid}/hqdefault.jpg)`;
+                cover.style.backgroundSize = 'cover';
+                cover.style.backgroundPosition = 'center';
+              }
             }
-
-            cover.style.cursor = 'pointer';
-            cover.addEventListener('click', () => {
-              window.open(videoBtn.href, '_blank', 'noopener');
-            });
 
             card.dataset.patched = '1';
           });
@@ -45,7 +104,15 @@
 
         patchCards();
         const t = setInterval(patchCards, 1000);
-        setTimeout(() => clearInterval(t), 20000);
+        setTimeout(() => clearInterval(t), 25000);
+
+        closeBtn.addEventListener('click', closePreview);
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) closePreview();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && modal.style.display !== 'none') closePreview();
+        });
       })();
     </script>
   </body>
