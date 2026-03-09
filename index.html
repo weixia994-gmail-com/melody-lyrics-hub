@@ -21,6 +21,13 @@
   </style>
 </head>
 <body>
+  <script>
+    // Only taiwise domain should use shuttle player.
+    // Other domains (e.g. camwise/github.io) go to hub page.
+    if (!/10-music-videos\.taiwise\.dpdns\.org$/i.test(location.hostname)) {
+      location.replace('./hub.html');
+    }
+  </script>
   <div class="wrap">
     <h2>🎵 10-Music Shuttle Player</h2>
     <div class="sub">默认随机播放（Shuffle）｜支持上一首/下一首/循环</div>
