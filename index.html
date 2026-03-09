@@ -123,13 +123,31 @@
               `;
             } else if (ytid) {
               cover.innerHTML = `
-                <img src="https://i.ytimg.com/vi/${ytid}/hqdefault.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.92;background:#111827" loading="lazy" referrerpolicy="no-referrer" />
+                <img id="thumb-${ytid}" src="https://i.ytimg.com/vi/${ytid}/hqdefault.jpg" alt="thumb" style="width:100%;height:100%;object-fit:cover;opacity:.92;background:#111827" loading="lazy" referrerpolicy="no-referrer" />
                 <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
                   <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
                     <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
                   </div>
                 </div>
               `;
+              // if YouTube image blocked, fallback to local mp4 first-frame preview
+              const img = cover.querySelector('img');
+              if (img) {
+                img.onerror = () => {
+                  cover.innerHTML = `
+                    <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
+                      <source src="${src}" type="video/mp4" />
+                    </video>
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to top, rgba(0,0,0,.24), rgba(0,0,0,.08));">
+                      <div style="width:58px;height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(1px)">
+                        <div style="margin-left:4px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid rgba(255,255,255,.95)"></div>
+                      </div>
+                    </div>
+                  `;
+                  const thumbVideo = cover.querySelector('video');
+                  thumbVideo && thumbVideo.play().catch(() => {});
+                };
+              }
             } else {
               cover.innerHTML = `
                 <video muted playsinline loop preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:.86;background:#111827">
