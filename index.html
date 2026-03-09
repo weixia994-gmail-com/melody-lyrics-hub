@@ -72,11 +72,25 @@
             videoBtn.setAttribute('download', '');
             videoBtn.removeAttribute('target');
 
-            // 2) Lyrics button: vtt from our place
+            // 2) Lyrics button: vtt from our place; if missing, stay on page
             if (lyricsBtn && /\.mp4($|\?)/i.test(src)) {
-              lyricsBtn.href = src.replace(/\.mp4(\?.*)?$/i, '.vtt');
+              const lyricsUrl = src.replace(/\.mp4(\?.*)?$/i, '.vtt');
+              lyricsBtn.href = lyricsUrl;
               lyricsBtn.setAttribute('download', '');
               lyricsBtn.removeAttribute('target');
+              lyricsBtn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                try {
+                  const r = await fetch(lyricsUrl, { method: 'HEAD' });
+                  if (r.ok) {
+                    window.location.href = lyricsUrl;
+                    return;
+                  }
+                } catch (_) {}
+                lyricsBtn.style.opacity = '0.6';
+                lyricsBtn.textContent = 'No Lyrics';
+                setTimeout(() => { lyricsBtn.textContent = 'Lyrics'; lyricsBtn.style.opacity = ''; }, 1800);
+              });
             }
 
             // 3) Center cover click: in-site modal playback with close
