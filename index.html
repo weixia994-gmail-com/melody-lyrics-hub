@@ -6,11 +6,11 @@
   <title>10 Music Videos - Shuttle Player</title>
   <style>
     body{margin:0;background:#0b1020;color:#eaf1ff;font-family:Arial,sans-serif}
-    .wrap{max-width:1200px;margin:16px auto;padding:0 12px}
-    .card{background:#121a2b;border:1px solid #2b3854;border-radius:14px;padding:12px}
-    video{width:100%;max-height:68vh;background:#000;border-radius:12px}
-    .row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-    .btn{padding:9px 13px;border-radius:10px;border:1px solid #344465;background:#1a2640;color:#fff;cursor:pointer}
+    .wrap{max-width:100vw;margin:0;padding:10px}
+    .card{background:#121a2b;border:1px solid #2b3854;border-radius:12px;padding:10px;min-height:96vh}
+    video{width:100%;height:84vh;background:#000;border-radius:10px;object-fit:contain}
+    .row{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;justify-content:center}
+    .btn{padding:10px 16px;border-radius:10px;border:1px solid #344465;background:#1a2640;color:#fff;cursor:pointer;font-size:15px}
     .btn.on{background:#2e6bff;border-color:#2e6bff}
       </style>
 </head>
@@ -26,11 +26,11 @@
     <div class="card">
       <video id="player" controls playsinline preload="metadata"></video>
       <div class="row">
-        <button class="btn" id="prev">⏮</button>
-        <button class="btn" id="play">▶</button>
-        <button class="btn" id="next">⏭</button>
-        <button class="btn on" id="shuffle">🔀</button>
-        <button class="btn" id="loop">🔁</button>
+        <button class="btn" id="prev">Prev</button>
+        <button class="btn" id="play">Pause</button>
+        <button class="btn" id="next">Next</button>
+        <button class="btn on" id="shuffle">Shuffle ON</button>
+        <button class="btn" id="loop">Loop OFF</button>
         </div>
 
       
@@ -86,25 +86,27 @@
     const s=songs[idx];
     if(s.youtubeUrl) window.open(s.youtubeUrl,'_blank','noopener');
   };
-  v.addEventListener('play', ()=>{ bPlay.textContent='⏸'; });
-  v.addEventListener('pause', ()=>{ bPlay.textContent='▶'; });
+  v.addEventListener('play', ()=>{ bPlay.textContent='Pause'; });
+  v.addEventListener('pause', ()=>{ bPlay.textContent='Play'; });
 
   bPrev.onclick=()=>setSong(pickPrevIndex(),true);
   bNext.onclick=()=>{ history.push(idx); setSong(pickNextIndex(),true); };
-  bPlay.onclick=()=>{ if(v.paused){ v.play().catch(()=>{}); bPlay.textContent='⏸'; } else { v.pause(); bPlay.textContent='▶'; } };
+  bPlay.onclick=()=>{ if(v.paused){ v.play().catch(()=>{}); bPlay.textContent='Pause'; } else { v.pause(); bPlay.textContent='Play'; } };
 
   bShuffle.onclick=()=>{
     shuffle=!shuffle;
     bShuffle.classList.toggle('on',shuffle);
+    bShuffle.textContent = shuffle ? 'Shuffle ON' : 'Shuffle OFF';
   };
 
   bLoop.onclick=()=>{
     loopOne=!loopOne;
     bLoop.classList.toggle('on',loopOne);
+    bLoop.textContent = loopOne ? 'Loop ON' : 'Loop OFF';
   };
 
   setSong(idx,true);
-  bPlay.textContent = "⏸";
+  bPlay.textContent = "Pause";
 })();
 </script>
 </body>
